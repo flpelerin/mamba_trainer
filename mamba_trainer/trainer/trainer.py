@@ -2,20 +2,20 @@ import torch
 
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.wandb     import Wandb
-from mamba_trainer.utils.time 	  import Time
+from mamba_trainer.utils.time       import Time
 from mamba_trainer.utils.util      import Util
 
 
 class TrainModel(metaclass=CallableMeta):
     train_step = 0
-	infer_during_training = False
+    infer_during_training = False
 
-	@staticmethod
-	def __call__(model, batches, num_batches, num_epochs=10, learning_rate=1e-4, wandb_config=None, infer_during_training=False):
+    @staticmethod
+    def __call__(model, batches, num_batches, num_epochs=10, learning_rate=1e-4, wandb_config=None, infer_during_training=False):
         TrainModel.infer_during_training = infer_during_training
 
-		Wandb(wandb_config)
-		TrainModel.Train(model, batches, num_batches, num_epochs, learning_rate)
+        Wandb(wandb_config)
+        TrainModel.Train(model, batches, num_batches, num_epochs, learning_rate)
         Wandb.Finish()
 
 
