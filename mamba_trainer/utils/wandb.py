@@ -1,8 +1,8 @@
 import os
 import wandb
 
-from mamba_trainer.utils.metaclass import CallableMeta
-from mamba_trainer.utils.metaclass import Globals
+from mamba_trainer.utils.metaclass import CallableMeta, Globals
+
 
 
 class Wandb(metaclass=CallableMeta):

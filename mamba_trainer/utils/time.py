@@ -1,7 +1,6 @@
 import time
 
-from mamba_trainer.utils.metaclass import CallableMeta
-from mamba_trainer.utils.metaclass import Globals
+from mamba_trainer.utils.metaclass import CallableMeta, Globals
 
 
 
