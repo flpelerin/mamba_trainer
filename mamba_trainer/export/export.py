@@ -134,10 +134,10 @@ def export_model(model, config, output_path):
     lm_head.weight - [50280, 768]
     '''
 
-	for n in range(n_layers):
-    	a_log = f'layers.{n}.mixer.A_log'
-    	if a_log in model:
-        	model[f'layers.{n}.mixer.A'] = -torch.exp(model.pop(a_log))
+    for n in range(n_layers):
+        a_log = f'layers.{n}.mixer.A_log'
+        if a_log in model:
+            model[f'layers.{n}.mixer.A'] = -torch.exp(model.pop(a_log))
 
 
     write_weights(out_file, model, 'embedding.weight')
@@ -182,10 +182,10 @@ def export_model_q8_0(model, config, output_path, group_size=64):
     lm_head.weight - [50280, 768]
     '''
 
-	for n in range(n_layers):
-    	a_log = f'layers.{n}.mixer.A_log'
-    	if a_log in model:
-        	model[f'layers.{n}.mixer.A'] = -torch.exp(model.pop(a_log))
+    for n in range(n_layers):
+        a_log = f'layers.{n}.mixer.A_log'
+        if a_log in model:
+            model[f'layers.{n}.mixer.A'] = -torch.exp(model.pop(a_log))
 
 
     write_weights_q8_0(out_file, model, 'embedding.weight')
