@@ -2,7 +2,7 @@ import torch
 
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.wandb     import Wandb, WandbConfig
-from mamba_trainer.utils.time       import Time
+from mamba_trainer.utils.time      import Time
 from mamba_trainer.utils.util      import Util
 
 
@@ -19,33 +19,34 @@ from mamba_trainer.utils.util      import Util
 
 
 @dataclass
-class Event:
-    enabled:  bool = False
-    step:     int  = 0
-    tee_file: str  = ''
+class TrainEvent:
+    enabled:  bool  = False
+    step:     float = 0
+    tee_file: str   = ''
 
 
 @dataclass 
 class EventConfig:
-    log_config:   Event = None 
-    infer_config: Event = None
-    save_config:  Event = None
-
+    log_config:   TrainEvent = None 
+    infer_config: TrainEvent = None
+    save_config:  TrainEvent = None
+    wandb_config: WandbConfig = None
 
 
 
 default_config = EventConfig(
-    log_config = Event(
+    log_config = TrainEvent(
         enabled = True,
         step = 10,
         tee_file = 'training_log.txt'
     ),
-    infer_config = Event(
+    infer_config = TrainEvent(
         enabled = True,
         step = 100,
         tee_file = 'inference_log.txt'
     ),
-    save_config = None
+    save_config = None,
+    wandb_config = None
 )
 
 
@@ -53,12 +54,13 @@ default_config = EventConfig(
 
 class TrainModel(metaclass=CallableMeta):
     train_step:   int         = 0
-    event_config: EventConfig = None
+    event_config: TrainEventConfig = None
 
 
     @staticmethod
-    def __call__(model, batches, num_batches, num_epochs=10, learning_rate=1e-4, wandb_config=None, event_config = default_config):
+    def __call__(model, batches, num_batches, num_epochs=10, learning_rate=1e-4, event_config = default_config):
         TrainModel.event_config = event_config
+        wandb_config = event_config.wandb_config
 
         Wandb(wandb_config)
         TrainModel.Train(model, batches, num_batches, num_epochs, learning_rate)
