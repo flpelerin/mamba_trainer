@@ -1,5 +1,7 @@
 from types import MethodType
 
+import torch
+
 from mamba_trainer.utils.metaclass import CallableMeta
 from mamba_trainer.utils.util import Util 
 
