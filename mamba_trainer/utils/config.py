@@ -24,11 +24,11 @@ class TrainEvent:
 
 @dataclass
 class InferConfig:
-	event:     TrainEvent = None
-	model                 = None
-	tokenizer 		      = None
-	n_predict: int        = 0
-	seed_text: str        = ''
+    event:     TrainEvent = None
+    model                 = None
+    tokenizer               = None
+    n_predict: int        = 0
+    seed_text: str        = ''
 
 
 @dataclass 

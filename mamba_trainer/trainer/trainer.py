@@ -101,18 +101,18 @@ class TrainModel(metaclass=CallableMeta):
         event = event_config.infer_config.event
         if event.enabled is True:
             if event.step % step == 0:
-				infer_config = event_config.infer_config
-				
-				model = infer_config.model
+                infer_config = event_config.infer_config
+                
+                model = infer_config.model
                 tokenizer = infer_config.tokenizer
-				
-				n_predict = infer_config.n_predict
-				seed_text = infer_config.seed_text
-				
-				if model is None or tokenizer is None:
-					return
+                
+                n_predict = infer_config.n_predict
+                seed_text = infer_config.seed_text
+                
+                if model is None or tokenizer is None:
+                    return
 
-				Util.Tee(event.tee_file, f"{model.generate_text(tokenizer, seed_text, n_predict)}\n")
+                Util.Tee(event.tee_file, f"{model.generate_text(tokenizer, seed_text, n_predict)}\n")
 
 
         # Implement save to tee_file here
