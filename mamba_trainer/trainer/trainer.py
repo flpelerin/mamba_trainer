@@ -1,3 +1,5 @@
+import torch
+
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.wandb     import Wandb
 from mamba_trainer.utils.time 	  import Time
