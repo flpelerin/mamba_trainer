@@ -109,7 +109,7 @@ class TrainModel(metaclass=CallableMeta):
         if event_config is None:
             return
 
-        event = event_config.log_event
+        event = event_config.log_config
         if event.enabled is True:
             if event.step % step == 0:
                 time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
