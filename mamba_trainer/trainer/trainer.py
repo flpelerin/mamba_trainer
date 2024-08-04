@@ -10,7 +10,7 @@ class TrainModel(metaclass=CallableMeta):
     train_step = 0
 
     @staticmethod
-    def __call__(model, batches, num_epochs, learning_rate):
+    def __call__(model, batches, num_batches, num_epochs, learning_rate):
         optimizer     = torch.optim.Adam(model.parameters(), lr=learning_rate)
         criterion     = torch.nn.CrossEntropyLoss()
 
