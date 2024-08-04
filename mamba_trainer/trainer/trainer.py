@@ -21,11 +21,17 @@ default_config = TrainConfig(
         step = 10,
         tee_file = 'training_log.txt'
     ),
-    infer_config = TrainEvent(
-        enabled = True,
-        step = 100,
-        tee_file = 'inference_log.txt'
-    ),
+    infer_config = InferConfig(
+		event = TrainEvent(
+        	enabled = True,
+        	step = 100,
+        	tee_file = 'inference_log.txt'
+    	),
+		model = None,
+		tokenizer = None,
+		n_predict = 256,
+		seed_text = "One day, "
+	),
     save_config = None,
     wandb_config = None
 )
