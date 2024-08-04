@@ -7,16 +7,17 @@ from mamba_trainer.utils.util      import Util
 
 class GenerateData(metaclass=CallableMeta):
     @staticmethod
-    def __call__(dataset, tokenizer, seq_length, batch_size):
-        dataset     = dataset
-        tokenizer   = tokenizer
-        seq_length  = seq_length
-        batch_size  = batch_size
-        vocab_size  = len(tokenizer.vocab)
+    def __call__(dataset_path, tokenizer, seq_length, batch_size):
+        dataset_path = dataset_path
+        tokenizer    = tokenizer
+        seq_length   = seq_length
+        batch_size   = batch_size
+        vocab_size   = len(tokenizer.vocab)
+
+		dataset = load_dataset(dataset_path)
 
         texts = dataset["train"]["text"]
         text  = GenerateData.ConcatSplits(texts)
-
 
         input_ids = tokenizer.encode(text)
         input_ids = GenerateData.ClipOutOfVocab(input_ids, vocab_size)
