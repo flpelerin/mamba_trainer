@@ -28,32 +28,32 @@ class WandbConfig:
 
 @dataclass
 class Event:
-	enabled:  bool = False
-	step:     int  = 0
-	tee_file: str  = ''
+    enabled:  bool = False
+    step:     int  = 0
+    tee_file: str  = ''
 
 
 @dataclass 
 class EventConfig:
-	log_config:   Event = None 
-	infer_config: Event = None
-	save_config:  Event = None
+    log_config:   Event = None 
+    infer_config: Event = None
+    save_config:  Event = None
 
 
 
 
 default_config = EventConfig(
-	log_config = Event(
-		enabled = True,
-		step = 10,
-		tee_file = 'training_log.txt'
-	),
-	infer_config = Event(
-		enabled = True,
-		step = 100,
-		tee_file = 'inference_log.txt'
-	),
-	save_config = None
+    log_config = Event(
+        enabled = True,
+        step = 10,
+        tee_file = 'training_log.txt'
+    ),
+    infer_config = Event(
+        enabled = True,
+        step = 100,
+        tee_file = 'inference_log.txt'
+    ),
+    save_config = None
 )
 
 
@@ -71,8 +71,8 @@ class TrainModel(metaclass=CallableMeta):
         Wandb(wandb_config)
         TrainModel.Train(model, batches, num_batches, num_epochs, learning_rate)
         Wandb.Finish()
-		
-		model.save()
+        
+        model.save()
 
 
     @staticmethod
@@ -113,20 +113,20 @@ class TrainModel(metaclass=CallableMeta):
         wandb_args = {"step": step, "epoch": epoch, "batch": batch, "loss": loss}
         Wandb.Log(wandb_args)
 
-		event_config = TrainModel.event_config
-		if event_config is None:
-			return
+        event_config = TrainModel.event_config
+        if event_config is None:
+            return
 
-		with event = event_config.log_config:
-			if event.enabled is True:
-				if event.step % step == 0:
-					time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
-	            	Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
+        with event = event_config.log_config:
+            if event.enabled is True:
+                if event.step % step == 0:
+                    time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
+                    Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
 
-		with event = event_config.infer_config:
-			if event.enabled is True:
-				if event.step % step == 0:
-					Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
+        with event = event_config.infer_config:
+            if event.enabled is True:
+                if event.step % step == 0:
+                    Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
 
 
-		# Implement save to tee_file here
+        # Implement save to tee_file here
