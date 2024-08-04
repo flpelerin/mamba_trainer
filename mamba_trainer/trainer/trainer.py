@@ -6,17 +6,73 @@ from mamba_trainer.utils.time       import Time
 from mamba_trainer.utils.util      import Util
 
 
+
+
+from dataclasses import dataclass, field
+
+from mamba_trainer.utils.metaclass import CallableMeta, Globals
+from mamba_trainer.utils.util      import Util
+
+
+
+@dataclass
+class WandbConfig:
+    entity=None,
+    project=None,
+    name='run-' + Util.RandomCode()
+    api_key=None
+
+
+
+
+
+@dataclass
+class Event:
+	enabled:  bool = False
+	step:     int  = 0
+	tee_file: str  = ''
+
+
+@dataclass 
+class EventConfig:
+	log_config:   Event = None 
+	infer_config: Event = None
+	save_config:  Event = None
+
+
+
+
+default_config = EventConfig(
+	log_config = Event(
+		enabled = True,
+		step = 10,
+		tee_file = 'training_log.txt'
+	),
+	infer_config = Event(
+		enabled = True,
+		step = 100,
+		tee_file = 'inference_log.txt'
+	),
+	save_config = None
+)
+
+
+
+
 class TrainModel(metaclass=CallableMeta):
-    train_step = 0
-    infer_during_training = False
+    train_step:   int         = 0
+    event_config: EventConfig = None
+
 
     @staticmethod
-    def __call__(model, batches, num_batches, num_epochs=10, learning_rate=1e-4, wandb_config=None, infer_during_training=False):
-        TrainModel.infer_during_training = infer_during_training
+    def __call__(model, batches, num_batches, num_epochs=10, learning_rate=1e-4, wandb_config=None, event_config = default_config):
+        TrainModel.event_config = event_config
 
         Wandb(wandb_config)
         TrainModel.Train(model, batches, num_batches, num_epochs, learning_rate)
         Wandb.Finish()
+		
+		model.save()
 
 
     @staticmethod
@@ -38,7 +94,6 @@ class TrainModel(metaclass=CallableMeta):
 
                 TrainModel.LogStep(epoch, num_epochs, batch, num_batches, loss)
 
-
     @staticmethod
     def ComputeTime(step, num_epochs, num_batches):
         time_step       = Time.Step(raw=True)
@@ -51,17 +106,27 @@ class TrainModel(metaclass=CallableMeta):
     @staticmethod
     def LogStep(epoch, num_epochs, batch, num_batches, loss, log_every=10):
         step = TrainModel.train_step
-        loss = loss.item()
+        TrainModel.train_step += 1
 
-        time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
+        loss = loss.item()
 
         wandb_args = {"step": step, "epoch": epoch, "batch": batch, "loss": loss}
         Wandb.Log(wandb_args)
 
-        if step % log_every == 0:
-            Util.Tee("training_log.txt", f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
+		event_config = TrainModel.event_config
+		if event_config is None:
+			return
 
-        if TrainModel.infer_during_training is True and step % (log_every * 10) == 0:
-            Util.Tee("inference_log.txt", f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
+		with event = event_config.log_config:
+			if event.enabled is True:
+				if event.step % step == 0:
+					time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
+	            	Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
 
-        TrainModel.train_step += 1
+		with event = event_config.infer_config:
+			if event.enabled is True:
+				if event.step % step == 0:
+					Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
+
+
+		# Implement save to tee_file here
