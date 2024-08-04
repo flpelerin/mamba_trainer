@@ -20,9 +20,9 @@ from mamba_trainer.utils.util      import Util
 
 @dataclass
 class TrainEvent:
-    enabled:  bool  = False
-    step:     float = 0
-    tee_file: str   = ''
+    enabled:  bool = False
+    step:     int  = 0
+    tee_file: str  = ''
 
 
 @dataclass 
@@ -108,7 +108,7 @@ class TrainModel(metaclass=CallableMeta):
         Wandb.Log(wandb_args)
 
         event_config = TrainModel.event_config
-        if event_config is None:
+        if event_config is None or step is 0:
             return
 
         event = event_config.log_config
