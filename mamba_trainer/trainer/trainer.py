@@ -86,7 +86,7 @@ class TrainModel(metaclass=CallableMeta):
                 loss.backward()
                 optimizer.step()
 
-                TrainModel.LogStep(epoch, num_epochs, batch, num_batches, loss)
+                TrainModel.LogStep(epoch, num_epochs, batch, num_batches, loss, model)
 
     @staticmethod
     def ComputeTime(step, num_epochs, num_batches):
@@ -98,7 +98,7 @@ class TrainModel(metaclass=CallableMeta):
         return Time.FormatString(time_up), Time.FormatString(time_per_epoch), Time.FormatString(time_remain)
 
     @staticmethod
-    def LogStep(epoch, num_epochs, batch, num_batches, loss, log_every=10):
+    def LogStep(epoch, num_epochs, batch, num_batches, loss, model, log_every=10):
         step = TrainModel.train_step
         TrainModel.train_step += 1
 
@@ -108,7 +108,7 @@ class TrainModel(metaclass=CallableMeta):
         Wandb.Log(wandb_args)
 
         event_config = TrainModel.event_config
-        if event_config is None or step is 0:
+        if event_config is None or step == 0:
             return
 
         event = event_config.log_config
