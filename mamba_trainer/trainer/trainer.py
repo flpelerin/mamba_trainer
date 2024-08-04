@@ -54,7 +54,7 @@ default_config = EventConfig(
 
 class TrainModel(metaclass=CallableMeta):
     train_step:   int         = 0
-    event_config: TrainEventConfig = None
+    event_config: EventConfig = None
 
 
     @staticmethod
