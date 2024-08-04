@@ -15,7 +15,7 @@ from mamba_trainer.utils.util      import Util
 
 
 
-default_config = Trainerconfig(
+default_config = TrainConfig(
     log_config = TrainEvent(
         enabled = True,
         step = 10,
