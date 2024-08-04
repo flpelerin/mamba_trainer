@@ -41,7 +41,7 @@ class TrainModel(metaclass=CallableMeta):
         return Time.FormatString(time_up), Time.FormatString(time_per_epoch), Time.FormatString(time_remain)
 
     @staticmethod
-    def LogStep(epoch, num_epochs, batch, num_baches, loss, log_every=10):
+    def LogStep(epoch, num_epochs, batch, num_batches, loss, log_every=10):
         step = TrainModel.train_step
         loss = loss.item()
 
