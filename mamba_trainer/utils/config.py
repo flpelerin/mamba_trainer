@@ -32,7 +32,7 @@ class InferConfig:
 
 
 @dataclass 
-class Trainerconfig:
+class Trainconfig:
     log_config:   TrainEvent = None 
     infer_config: TrainEvent = None
     save_config:  TrainEvent = None
