@@ -14,7 +14,7 @@ class GenerateData(metaclass=CallableMeta):
         batch_size   = batch_size
         vocab_size   = len(tokenizer.vocab)
 
-		dataset = load_dataset(dataset_path)
+        dataset = load_dataset(dataset_path)
 
         texts = dataset["train"]["text"]
         text  = GenerateData.ConcatSplits(texts)
