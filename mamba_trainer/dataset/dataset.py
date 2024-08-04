@@ -4,7 +4,7 @@ import torch
 import numpy as np
 
 
-from mamba_trainer.utils.metaclass import CallableMeta, Globals
+from mamba_trainer.utils.metaclass import CallableMeta
 from mamba_trainer.utils.util      import Util
 
 

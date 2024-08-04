@@ -5,48 +5,48 @@ from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.util      import Util
 
 
+
+@dataclass
+class WandbConfig:
+	entity=None,
+	project=None,
+	name='run-' + Util.RandomCode()
+	api_key=None
+
+
 class Wandb(metaclass=CallableMeta):
-    wandb_has_init = False
+	has_init = False
 
-    @staticmethod
-    def Init():
-        if Globals.wandb_log_run is False:
-            return
+	@staticmethod
+	def __call__(wandb_config=None):
+		if wandb_config is None:
+			return
 
-        if Wandb.wandb_has_init is True:
-            return
+		entity =  wandb_config.entity
+		project = wandb_config.project
+		name =    wandb_config.name
+		api_key = wandb_config.api_key
 
-        Wandb.wandb_has_init = True
+		if entity is None or project is None or api_key is None:
+			return
 
-        project  = Globals.wandb_project
-        entity   = Globals.wandb_entity
-        api_key  = Globals.wandb_api_key
-        name     = Globals.wandb_name
+		os.environ['WANDB_API_KEY'] = api_key
 
-        if name is None or name == "":
-            name = "run-" + Util.RandomCode()
-
-        os.environ["WANDB_API_KEY"] = api_key
-
-        wandb.init(project=project, entity=entity, name=name)
+		wandb.init(project, entity, name)
+		Wandb.has_init = True
 
 
-    @staticmethod
-    def Log(args):
-        if Globals.wandb_log_run is False:
-            return
+	@staticmethod
+	def Log(args):
+		if not Wandb.has_init:
+			return
 
-        if Wandb.wandb_has_init is False:
-            Wandb.Init()
-
-        if Wandb.wandb_has_init is True:
-            wandb.log(args)
+		wandb.log(args)
 
 
-    @staticmethod
-    def Finish():
-        if Globals.wandb_log_run is False:
-            return
+	@staticmethod
+	def Finish():
+		if not Wandb.has_init:
+			return
 
-        if Wandb.wandb_has_init is True:
-            wandb.finish()
+		wandb.finish()
