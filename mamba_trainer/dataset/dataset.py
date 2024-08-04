@@ -1,4 +1,5 @@
 from datasets import load_dataset
+import numpy as np
 
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.util      import Util
