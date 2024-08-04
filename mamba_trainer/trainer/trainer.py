@@ -1,7 +1,7 @@
 import torch
 
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
-from mamba_trainer.utils.wandb     import Wandb
+from mamba_trainer.utils.wandb     import Wandb, WandbConfig
 from mamba_trainer.utils.time       import Time
 from mamba_trainer.utils.util      import Util
 
@@ -13,14 +13,6 @@ from dataclasses import dataclass, field
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.util      import Util
 
-
-
-@dataclass
-class WandbConfig:
-    entity=None,
-    project=None,
-    name='run-' + Util.RandomCode()
-    api_key=None
 
 
 
@@ -123,7 +115,7 @@ class TrainModel(metaclass=CallableMeta):
                 time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
                 Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
 
-		event = event_config.infer_config
+        event = event_config.infer_config
         if event.enabled is True:
             if event.step % step == 0:
                 Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
