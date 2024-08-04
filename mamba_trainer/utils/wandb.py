@@ -1,19 +1,10 @@
 import os
 import wandb
 
-from dataclasses import dataclass, field
-
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.util      import Util
 
 
-
-@dataclass
-class WandbConfig:
-    entity=None,
-    project=None,
-    name='run-' + Util.RandomCode()
-    api_key=None
 
 
 class Wandb(metaclass=CallableMeta):

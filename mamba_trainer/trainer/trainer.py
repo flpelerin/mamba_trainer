@@ -4,11 +4,8 @@ from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.wandb     import Wandb, WandbConfig
 from mamba_trainer.utils.time      import Time
 from mamba_trainer.utils.util      import Util
+from mamba_trainer.utils.config    import TrainConfig
 
-
-
-
-from dataclasses import dataclass, field
 
 from mamba_trainer.utils.metaclass import CallableMeta, Globals
 from mamba_trainer.utils.util      import Util
@@ -18,23 +15,7 @@ from mamba_trainer.utils.util      import Util
 
 
 
-@dataclass
-class TrainEvent:
-    enabled:  bool = False
-    step:     int  = 0
-    tee_file: str  = ''
-
-
-@dataclass 
-class EventConfig:
-    log_config:   TrainEvent = None 
-    infer_config: TrainEvent = None
-    save_config:  TrainEvent = None
-    wandb_config: WandbConfig = None
-
-
-
-default_config = EventConfig(
+default_config = Trainerconfig(
     log_config = TrainEvent(
         enabled = True,
         step = 10,
@@ -53,8 +34,8 @@ default_config = EventConfig(
 
 
 class TrainModel(metaclass=CallableMeta):
-    train_step:   int         = 0
-    event_config: EventConfig = None
+    train_step   = 0
+    train_config = None
 
 
     @staticmethod
@@ -117,10 +98,21 @@ class TrainModel(metaclass=CallableMeta):
                 time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
                 Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
 
-        event = event_config.infer_config
+        event = event_config.infer_config.event
         if event.enabled is True:
             if event.step % step == 0:
-                Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
+				infer_config = event_config.infer_config
+				
+				model = infer_config.model
+                tokenizer = infer_config.tokenizer
+				
+				n_predict = infer_config.n_predict
+				seed_text = infer_config.seed_text
+				
+				if model is None or tokenizer is None:
+					return
+
+				Util.Tee(event.tee_file, f"{model.generate_text(tokenizer, seed_text, n_predict)}\n")
 
 
         # Implement save to tee_file here
