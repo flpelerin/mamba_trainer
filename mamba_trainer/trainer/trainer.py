@@ -117,16 +117,16 @@ class TrainModel(metaclass=CallableMeta):
         if event_config is None:
             return
 
-        with event_config.log_config as event:
-            if event.enabled is True:
-                if event.step % step == 0:
-                    time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
-                    Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
+        event = event_config.log_event
+        if event.enabled is True:
+            if event.step % step == 0:
+                time_up, time_per_epoch, time_remain = TrainModel.ComputeTime(step, num_epochs, num_batches)
+                Util.Tee(event.tee_file, f"Step: {step}\t\tEpoch: {epoch} / {num_epochs}\t\tBatch: {batch} / {num_batches}\t\tLoss: {round(loss, 4)}\t\tTime: {time_up} / {time_per_epoch}\t({time_remain} remaining)")
 
-        with event_config.infer_config as event:
-            if event.enabled is True:
-                if event.step % step == 0:
-                    Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
+		event = event_config.infer_config
+        if event.enabled is True:
+            if event.step % step == 0:
+                Util.Tee(event.tee_file, f"{model.generate_text(Globals.tokenizer, Globals.seed_text, Globals.num_predict)}\n")
 
 
         # Implement save to tee_file here
