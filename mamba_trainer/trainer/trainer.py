@@ -1,7 +1,7 @@
-from mamba_trainer.util.metaclass import CallableMeta, Globals
-from mamba_trainer.util.wandb     import Wandb
-from mamba_trainer.util.time 	  import Time
-from mamba_trainer.util.util      import Util
+from mamba_trainer.utils.metaclass import CallableMeta, Globals
+from mamba_trainer.utils.wandb     import Wandb
+from mamba_trainer.utils.time 	  import Time
+from mamba_trainer.utils.util      import Util
 
 
 class TrainModel(metaclass=CallableMeta):
